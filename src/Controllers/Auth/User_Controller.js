@@ -1,7 +1,6 @@
-const db = require('../../Models/index'); 
-const auth = require('../../AuthMiddleware/index')
+const db = require('../../Models/index');  
 const bcrypt = require('bcrypt');
-
+const JWT = require('../../Utils/jwt/jwt')
 
 module.exports. createUser=  async  (req,res)=>{ 
     try {
@@ -54,10 +53,10 @@ module.exports. sign_in =  async  (req,res)=>{
          const result = await    bcrypt.compare(password, user.password ) 
                  if(result )  {  
                     if(!user.JWTtokenId )
-                    auth.generateJWT(data,res)
+                    JWT.generateJWT(data,res)
                 else {
                  const resultat = await db['JWTtoken'].destroy({where : {id : user.JWTtokenId }});  
-                auth.generateJWT(data,res)
+                 JWT.generateJWT(data,res)
                 }
                 return 
             }

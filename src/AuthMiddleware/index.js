@@ -10,7 +10,7 @@ module.exports. authenticateJWT =  async (req, res, next) => {
             return res.status(401).json({ message: 'Access token is missing or invalid' });
         }
     const decodedToken =  jwt.verify(token, process.env.SECRET_KEY) 
-    const user = decodedToken.user;
+    const user = decodedToken;
     console.log("user :  \n  " , user );
     const token_fromUser = await (await db['User'].findByPk(user.id)).getJWTtoken();
                 // console.log("token === token_fromUser.dataValues.token : " , token === token_fromUser.dataValues.token);
@@ -18,7 +18,6 @@ module.exports. authenticateJWT =  async (req, res, next) => {
                 // console.log("  token_fromUser.dataValues.token : \n " ,   token_fromUser.dataValues.token);
     if(token === token_fromUser.dataValues.token ) 
        {
-        user['role'] =(await  ( await db['User'].findByPk(user.id)).getRole()) .dataValues;
         req.user = user;
        }
     else 
@@ -35,32 +34,17 @@ module.exports. authenticateJWT =  async (req, res, next) => {
 };
  
 
-module.exports. generateJWT  =  async    (user,res)=>{ 
 
-   try {    console.log("user : \n  " , {user}  ) 
-//    const object_user = user.dataValues ; 
-//    object_user['role'] = (await user.getRole()).dataValues;
-//    console.log("object_user : \n " , object_user);
-console.log("user : \n " , user);
-        const token = jwt.sign( {user} ,  process.env.SECRET_KEY , { expiresIn: '1h' }); 
-                   const result =   await user.createJWTtoken({token: token});   
-                   console.log("result generateJWT : \n " , result);
-        res.json({ token });
-        return 
-    }
-    catch(err){
-        console.log("Error generatting jwt    : " , err)
-    }
-       
-}
 
 
 module.exports.authorizeRoles = (roles) => {
     return (req, res, next) => {
-  if(req.user.role){    if (!roles.includes(req.user.role.name)) {
+  if(req.user.role){  
+    console.log("req.user.role : \n" ,req.user.role);
+    if (!roles.includes(req.user.role)) {
         return res.status(403).json({ message: 'Access forbidden: Insufficient rights' });
       }
-    } else  return res.status(403).json({ message: 'Access forbidden: Insufficient rights' });
+    } else  return res.status(403).json({ message: 'Access forbidden: no rights' });
       next();
     };
   };
