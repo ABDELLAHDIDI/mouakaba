@@ -53,7 +53,7 @@ module.exports = (sequelize) => {
     Ref_esco_skill.hasOne(Ref_esco_skill, { as: 'parent' });
     Ref_esco_skill.belongsTo(Ref_esco_skill, { as: 'child' });
 
-    Ref_esco_skill.belongsToMany(db['Ref_esco_occupation'],{ through: db['Esco_occupations_skills_relations']  , as:'occupations' });
+    Ref_esco_skill.belongsToMany(db['Ref_esco_occupation'],{ through: db['Esco_occupations_skills_relations'] })
 };
 
   return Ref_esco_skill;

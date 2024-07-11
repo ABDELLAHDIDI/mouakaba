@@ -29,7 +29,7 @@ module.exports. getUser =  async  (req,res)=>{
     if(!!  data )
         {   
         const user =data.dataValues
-            console.log("user : " , user )
+            // console.log("user : " , user )
             res.status(200).send(user);
         return 
         }

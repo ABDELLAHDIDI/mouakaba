@@ -2,8 +2,8 @@ const db = require('../../../../Models/index');
 const read_csv = require('../../../../Utils/CSV/Read_csv')
 const bulk_Insert_In_Chunks = require('../../../../Utils/CSV/bulk_Insert_In_Chunks')
 
-const filters = require('../../../../Utils/query/Finders')
-
+const find = require('../../../../Utils/query/Finders')
+const util = require('util');
 
 module.exports. insert_from_csv =  async  (req,res)=>{ 
     // console.time('start');
@@ -19,13 +19,23 @@ module.exports. insert_from_csv =  async  (req,res)=>{
 
 module.exports. getOccupations =  async  (req,res)=>{ 
                 try {
-                    const {Fields , where,pagination,OrderBy,Include} = filters(req.query,db.Op,db)  ;
+                    console.log("req.query.qurey : \n " , req.query );
+                    const {Fields , where,pagination,OrderBy,include} = find.filters(req.query,db)  ;//new 
+
+                    console.log("query  from controller : " , util.inspect({ 
+                        where: where   ,  
+                        ...pagination , 
+                        order :   OrderBy,
+                        attributes :  Fields,
+                        include
+                    }, { depth: null }) );
+
                       const   occupations = await db['Ref_esco_occupation'].findAndCountAll( { 
                             where: where   ,  
                             ...pagination , 
                             order : OrderBy ,
                             attributes :  Fields,
-                            Include
+                            include
                         }) ; 
                     const result = { 
                         totalPages : Math.ceil(occupations?.count / pagination.limit ),

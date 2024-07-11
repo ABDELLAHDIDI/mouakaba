@@ -19,7 +19,9 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
         set(value) { 
 
-        const hashedValue  =    bcrypt.hashSync(value.toString(), parseInt(process.env.SALT_ROUNDS) ); 
+        const hashedValue  =    bcrypt.hashSync(value.toString(), parseInt(process.env.SALT_ROUNDS) );  
+
+
 
    
         this.setDataValue('password', hashedValue  );

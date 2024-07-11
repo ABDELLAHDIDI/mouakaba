@@ -1,6 +1,7 @@
 
 const jwt = require('jsonwebtoken');
 
+
 module.exports. generateJWT  =  async    (user,res)=>{ 
 
     try {   

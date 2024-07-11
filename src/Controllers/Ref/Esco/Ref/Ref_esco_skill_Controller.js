@@ -3,6 +3,7 @@ const read_csv = require('../../../../Utils/CSV/Read_csv')
 const bulk_Insert_In_Chunks = require('../../../../Utils/CSV/bulk_Insert_In_Chunks')
 const finders = require('../../../../Utils/query/Finders')
 
+const util = require('util');
 
 module.exports. insert_from_csv =  async  (req,res)=>{ 
     // console.time('start');
@@ -17,20 +18,44 @@ module.exports. insert_from_csv =  async  (req,res)=>{
             }
 
  module.exports. getSkills =  async  (req,res)=>{ 
+
+
+    console.log("req.query : \n " , req.query);
     try {
-        const {Fields , where,pagination,OrderBy,Include} = finders.filters(req.query,db.Op,db)  ;
-        // console.log("where from controller : " , where);
-          const   occupations = await db['Ref_esco_skill'].findAndCountAll( { 
+        const {Fields , where,pagination,OrderBy,include} = finders.filters(req.query,db)  ;
+        console.log("query  from controller : " , util.inspect({ 
+            where: where   ,  
+            ...pagination , 
+            order :   OrderBy,
+            attributes :  Fields,
+            include
+        }, { depth: null }) );
+          const   skills = await db['Ref_esco_skill'].findAndCountAll( { 
                 where: where   ,  
                 ...pagination , 
-                order : OrderBy ,
+                order :   OrderBy,
                 attributes :  Fields,
-                Include
+                include
             }) ; 
+        // const   skills = await db['Ref_esco_skill'].findAndCountAll( { 
+        //     where:   {
+        //        [ db.Op.and] : [
+        //           { 'status': 'released' },
+        //         //   { 'modifiedDate': '2024-01-24T15:46:35.000Z' },
+        //           { 'id': { [db.Op.gt]: '400' } },
+        //         //   { 'id': { [db.Op.lt]: '24' } }
+        //         ],
+        //         // 'modifiedDate': { [db.Op.or]: [ '2024-01-24T15:46:35.000Z', '2024-01-24T15:46:35.000Z' ] }
+        //         id: { [db.Op.lt]: 500, [db.Op.between]: [ '23', '440' ] },
+        //       }   ,  
+        //     ...pagination , 
+        //     order :   OrderBy,
+        //     attributes :  Fields, 
+        // }) ; 
         const result = { 
-            totalPages : Math.ceil(occupations?.count / pagination.limit ),
-            totalOccupations : occupations?.count,
-            Occupations : occupations?.rows
+            totalPages : Math.ceil(skills?.count / pagination.limit ),
+            totalSkills : skills?.count,
+            Skill : skills?.rows
         }
             res.status(200).send({result});
         return  
